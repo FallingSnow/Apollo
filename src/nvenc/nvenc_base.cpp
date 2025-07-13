@@ -17,7 +17,7 @@
 // - NV_ENC_*_VER definitions where the value inside NVENCAPI_STRUCT_VERSION() was increased
 // - Incompatible struct changes in nvEncodeAPI.h (fields removed, semantics changed, etc.)
 // - Test both old and new drivers with all supported codecs
-#if NVENCAPI_VERSION != MAKE_NVENC_VER(12U, 0U)
+#if NVENCAPI_VERSION != MAKE_NVENC_VER(12U, 1U)
   #error Check and update NVENC code for backwards compatibility!
 #endif
 
@@ -137,6 +137,7 @@ namespace nvenc {
     }
 
     NV_ENC_INITIALIZE_PARAMS init_params = {min_struct_version(NV_ENC_INITIALIZE_PARAMS_VER)};
+    init_params.splitEncodeMode = NV_ENC_SPLIT_AUTO_FORCED_MODE;
 
     switch (client_config.videoFormat) {
       case 0:
