@@ -323,8 +323,10 @@ int main(int argc, char *argv[]) {
 
   if (video::probe_encoders()) {
 #ifdef _WIN32
-    // Create a temporary virtual display for encoder capability probing if no active display was found
-    if (!video::allow_encoder_probing()) {
+    bool allow_probing = video::allow_encoder_probing();
+    bool probe_result = false;
+    // Create a temporary virtual display for encoder capability probing
+    if (proc::vDisplayDriverStatus == VDISPLAY::DRIVER_STATUS::OK) {
       std::string probe_uuid_str = PROBE_DISPLAY_UUID;
       auto probe_uuid = uuid_util::uuid_t::parse(probe_uuid_str);
       auto* probe_guid = (GUID*)(void*)&probe_uuid;
@@ -344,18 +346,20 @@ int main(int argc, char *argv[]) {
         *probe_guid
       );
 
+      std::this_thread::sleep_for(500ms);
+
       // Probe again anyways
       if (video::probe_encoders()) {
-        BOOST_LOG(error) << "Video failed to find working encoder even after attempted with a virtual display"sv;
+        if (allow_probing) {
+          BOOST_LOG(error) << "Video failed to find working encoder: allow probing but failed"sv;
+        } else {
+          BOOST_LOG(error) << "Video failed to find working encoder even after attempted with a virtual display"sv;
+        }
       }
 
       VDISPLAY::removeVirtualDisplay(*probe_guid);
-    } else {
-      if (proc::vDisplayDriverStatus == VDISPLAY::DRIVER_STATUS::OK) {
-        BOOST_LOG(error) << "Video failed to find working encoder: allow probing but failed"sv;
-      } else {
-        BOOST_LOG(error) << "Video failed to find working encoder: probe failed and virtual display driver isn't initialized"sv;
-      }
+    } else if (!allow_probing) {
+      BOOST_LOG(error) << "Video failed to find working encoder: probe failed and virtual display driver isn't initialized"sv;
     }
 #else
     BOOST_LOG(error) << "Video failed to find working encoder: probing failed."sv;

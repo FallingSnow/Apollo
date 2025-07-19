@@ -247,6 +247,7 @@
               "limit_framerate": "enabled",
               "envvar_compatibility_mode": "disabled",
               "legacy_ordering": "disabled",
+              "ignore_encoder_probe_failure": "disabled",
               "hevc_mode": 0,
               "av1_mode": 0,
               "capture": "",
@@ -475,7 +476,10 @@
               this.saved = this.restarted = false;
             }, 5000);
             fetch("./api/restart", {
-              method: 'POST'
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              }
             })
             .then((resp) => {
               if (resp.status !== 200) {

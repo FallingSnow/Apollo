@@ -440,6 +440,7 @@ namespace config {
     false, // headless_mode
     true, // limit_framerate
     false, // double_refreshrate
+
     28,  // qp
 
     0,  // hevc_mode
@@ -513,6 +514,7 @@ namespace config {
 
     "1920x1080x60",  // fallback_mode
     false, // isolated Display
+    false, // ignore_encoder_probe_failure
   };
 
   audio_t audio {
@@ -1198,6 +1200,7 @@ namespace config {
     int_f(vars, "max_bitrate", video.max_bitrate);
     string_f(vars, "fallback_mode", video.fallback_mode);
     bool_f(vars, "isolated_virtual_display_option", video.isolated_virtual_display_option);
+    bool_f(vars, "ignore_encoder_probe_failure", video.ignore_encoder_probe_failure);
 
     path_f(vars, "pkey", nvhttp.pkey);
     path_f(vars, "cert", nvhttp.cert);
